@@ -1,6 +1,8 @@
 require('dotenv').config();
 import axios from 'axios';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const API_KEY = process.env.API_KEY;
 
@@ -24,6 +26,16 @@ form.addEventListener('submit', async event => {
 
 loadMoreButton.addEventListener('click', fetchImages);
 
+function isScrollAtEnd() {
+  return window.innerHeight + window.scrollY >= document.body.offsetHeight;
+}
+
+window.addEventListener('scroll', () => {
+  if (isScrollAtEnd()) {
+    fetchImages();
+  }
+});
+
 async function fetchImages() {
   try {
     const response = await axios.get(
@@ -40,6 +52,17 @@ async function fetchImages() {
         const imageCard = createImageCard(image);
         gallery.insertAdjacentHTML('beforeend', imageCard);
       });
+
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+
+      new SimpleLightbox('.photo-card a');
       loadMoreButton.style.display = 'block';
       if (images.length < 40) {
         loadMoreButton.style.display = 'none';
@@ -59,7 +82,9 @@ async function fetchImages() {
 function createImageCard(image) {
   return `
     <div class="photo-card">
+    <a href="${image.largeImageURL}" class="lightbox">
       <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+      </a>
       <div class="info">
         <p class="info-item">
           <b>Likes:</b> ${image.likes}
