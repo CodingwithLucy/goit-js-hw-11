@@ -4,7 +4,7 @@ import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = '42562845-73a81eaa8d69c5cacc467e0b5';
 
 let searchQuery = '';
 let page = 1;
