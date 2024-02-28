@@ -8,6 +8,7 @@ const API_KEY = '42562845-73a81eaa8d69c5cacc467e0b5';
 let searchQuery = '';
 let page = 1;
 let totalHits = 0;
+let isFirstPage = true;
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
@@ -27,6 +28,7 @@ form.addEventListener('submit', async event => {
   gallery.innerHTML = '';
   page = 1;
   totalHits = 0;
+  isFirstPage = true;
   loadMoreButton.style.display = 'none';
   fetchImages();
 });
@@ -77,9 +79,12 @@ async function fetchImages() {
           "We're sorry, but you've reached the end of search results."
         );
       }
-      Notiflix.Notify.success(`Hooray! We found ${totalHits} results.`);
+      if (isFirstPage) {
+        Notiflix.Notify.success(`Hooray! We found ${totalHits} results.`);
+      }
     }
     page += 1;
+    isFirstPage = false;
   } catch (error) {
     console.error('Error:', error);
     Notiflix.Notify.failure('Something went wrong, please try again later.');
