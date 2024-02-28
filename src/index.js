@@ -1,4 +1,3 @@
-require('dotenv').config();
 import axios from 'axios';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
@@ -8,6 +7,7 @@ const API_KEY = '42562845-73a81eaa8d69c5cacc467e0b5';
 
 let searchQuery = '';
 let page = 1;
+let totalHits = 0;
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
@@ -17,9 +17,16 @@ loadMoreButton.style.display = 'none';
 
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  searchQuery = event.currentTarget.elements.searchQuery.value.trim();
+
+  if (!searchQuery.trim()) {
+    Notiflix.Notify.failure('Please enter a search query.');
+    return;
+  }
+
   gallery.innerHTML = '';
-  searchQuery = event.currentTarget.elements.searchQuery.value;
   page = 1;
+  totalHits = 0;
   loadMoreButton.style.display = 'none';
   fetchImages();
 });
@@ -31,7 +38,7 @@ function isScrollAtEnd() {
 }
 
 window.addEventListener('scroll', () => {
-  if (isScrollAtEnd()) {
+  if (isScrollAtEnd() && page * 40 <= totalHits) {
     fetchImages();
   }
 });
@@ -42,7 +49,7 @@ async function fetchImages() {
       `https://pixabay.com/api/?key=${API_KEY}&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`
     );
     const images = response.data.hits;
-    const totalHits = response.data.totalHits;
+    totalHits = response.data.totalHits;
     if (images.length === 0) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
