@@ -12,9 +12,6 @@ let isFirstPage = true;
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
-const loadMoreButton = document.querySelector('.load-more');
-
-loadMoreButton.style.display = 'none';
 
 form.addEventListener('submit', async event => {
   event.preventDefault();
@@ -29,11 +26,8 @@ form.addEventListener('submit', async event => {
   page = 1;
   totalHits = 0;
   isFirstPage = true;
-  loadMoreButton.style.display = 'none';
   fetchImages();
 });
-
-loadMoreButton.addEventListener('click', fetchImages);
 
 function isScrollAtEnd() {
   return window.innerHeight + window.scrollY >= document.body.offsetHeight;
@@ -72,9 +66,7 @@ async function fetchImages() {
       });
 
       new SimpleLightbox('.photo-card a');
-      loadMoreButton.style.display = 'block';
       if (images.length < 40) {
-        loadMoreButton.style.display = 'none';
         Notiflix.Notify.info(
           "We're sorry, but you've reached the end of search results."
         );
